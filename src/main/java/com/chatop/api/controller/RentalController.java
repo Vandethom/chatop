@@ -40,8 +40,9 @@ public class RentalController {
     
     @GetMapping
     public ResponseEntity<?> getAllRentals() {
-        List<Rental> rentals = rentalRepository.findAll();
+        List<Rental>        rentals  = rentalRepository.findAll();
         Map<String, Object> response = new HashMap<>();
+
         response.put("rentals", rentals);
         return ResponseEntity.ok(response);
     }
@@ -63,70 +64,70 @@ public class RentalController {
             @RequestParam("price")       Double price,
             @RequestParam("description") String description,
             @RequestParam(
-                value = "picture", 
+                value    = "picture", 
                 required = false
                 ) MultipartFile picture) {
     
-        try {
-            // Get current authenticated user
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
-            User           owner          = userRepository.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            
-            Rental rental = new Rental();
-            rental.setName(name);
-            rental.setSurface(surface);
-            rental.setPrice(price);
-            rental.setDescription(description);
-            rental.setOwner(owner);
-            
-            // Handle file upload if provided
-            if (
-                picture != null 
-            && !picture.isEmpty()
-            ) {
-                // Create uploads directory if it doesn't exist
-                File directory = new File(UPLOAD_DIR);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                
-                // Generate unique filename to avoid collisions
-                String originalFilename = picture.getOriginalFilename();
-                String fileExtension    = originalFilename.substring(originalFilename.lastIndexOf('.'));
-                String newFilename      = UUID.randomUUID().toString() + fileExtension;
-                
-                // Save file to disk
-                Path filePath = Paths.get(UPLOAD_DIR + newFilename);
-                Files.write(filePath, picture.getBytes());
-                
-                // Set the picture URL in the rental
-                rental.setPicture("/uploads/" + newFilename);
-            }
-            
-            Timestamp now = new Timestamp(System.currentTimeMillis());
+                try {
+                    // Get current authenticated user
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
+                    User           owner          = userRepository.findByEmail(userDetails.getUsername())
+                            .orElseThrow(() -> new RuntimeException("User not found"));
+                    
+                    Rental rental = new Rental();
+                    rental.setName(name);
+                    rental.setSurface(surface);
+                    rental.setPrice(price);
+                    rental.setDescription(description);
+                    rental.setOwner(owner);
+                    
+                    // Handle file upload if provided
+                    if (
+                        picture != null 
+                    && !picture.isEmpty()
+                    ) {
+                        // Create uploads directory if it doesn't exist
+                        File directory = new File(UPLOAD_DIR);
+                        if (!directory.exists()) {
+                            directory.mkdirs();
+                        }
+                        
+                        // Generate unique filename to avoid collisions
+                        String originalFilename = picture.getOriginalFilename();
+                        String fileExtension    = originalFilename.substring(originalFilename.lastIndexOf('.'));
+                        String newFilename      = UUID.randomUUID().toString() + fileExtension;
+                        
+                        // Save file to disk
+                        Path filePath = Paths.get(UPLOAD_DIR + newFilename);
+                        Files.write(filePath, picture.getBytes());
+                        
+                        // Set the picture URL in the rental
+                        rental.setPicture("/uploads/" + newFilename);
+                    }
+                    
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            rental.setCreatedAt(now);
-            rental.setUpdatedAt(now);
-            rentalRepository.save(rental);
-            
-            // Return success response
-            Map<String, String> response = new HashMap<>();
-            response.put(
-                "message", 
-                "Rental created successfully"
-                );
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-            
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload picture: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating rental: " + e.getMessage());
-        }
-    }
+                    rental.setCreatedAt(now);
+                    rental.setUpdatedAt(now);
+                    rentalRepository.save(rental);
+                    
+                    // Return success response
+                    Map<String, String> response = new HashMap<>();
+                    response.put(
+                        "message", 
+                        "Rental created successfully"
+                        );
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                    
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Failed to upload picture: " + e.getMessage());
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Error creating rental: " + e.getMessage());
+                }
+            }
     
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRental(

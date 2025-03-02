@@ -68,6 +68,7 @@ public class SecurityConfig {
                     .requestMatchers("/uploads/**").permitAll()
                     // Explicitly permit all rental endpoints for testing - to remove
                     .requestMatchers("/api/rentals/**").authenticated() 
+                    .requestMatchers("/api/messages/**").authenticated()
                     .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->

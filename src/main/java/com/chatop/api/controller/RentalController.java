@@ -1,9 +1,18 @@
 package com.chatop.api.controller;
 
+import com.chatop.api.dto.request.RentalDTO;
+import com.chatop.api.dto.response.MessageResponseDTO;
+import com.chatop.api.dto.response.RentalResponseDTO;
+import com.chatop.api.dto.response.RentalsResponseDTO;
+
+import com.chatop.api.mapper.EntityMapper;
 import com.chatop.api.model.Rental;
 import com.chatop.api.model.User;
 import com.chatop.api.repository.RentalRepository;
 import com.chatop.api.repository.UserRepository;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +31,6 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,25 +43,30 @@ public class RentalController {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityMapper mapper;
     
     private static final String UPLOAD_DIR = "uploads/";
     
     @GetMapping
     public ResponseEntity<?> getAllRentals() {
-        List<Rental>        rentals  = rentalRepository.findAll();
-        Map<String, Object> response = new HashMap<>();
+        List<Rental>            rentals      = rentalRepository.findAll();
+        List<RentalResponseDTO> responseDTOs = mapper.toRentalResponseDTOList(rentals);
 
-        response.put("rentals", rentals);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new RentalsResponseDTO(responseDTOs));
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<?> getRentalById(@PathVariable Long id) {
         Optional<Rental> rental = rentalRepository.findById(id);
+
         if (rental.isPresent()) {
-            return ResponseEntity.ok(rental.get());
+            RentalResponseDTO rentalDTO = mapper.toRentalResponseDTO(rental.get());
+
+            return ResponseEntity.ok(rentalDTO);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rental not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponseDTO("Rental not found"));
         }
     }
     
@@ -63,23 +76,22 @@ public class RentalController {
             @RequestParam("surface")     Double surface,
             @RequestParam("price")       Double price,
             @RequestParam("description") String description,
-            @RequestParam(
-                value    = "picture", 
-                required = false
-                ) MultipartFile picture) {
+            @RequestParam(value = "picture", required = false) MultipartFile picture) {
     
                 try {
-                    // Get current authenticated user
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
                     User           owner          = userRepository.findByEmail(userDetails.getUsername())
                             .orElseThrow(() -> new RuntimeException("User not found"));
                     
-                    Rental rental = new Rental();
-                    rental.setName(name);
-                    rental.setSurface(surface);
-                    rental.setPrice(price);
-                    rental.setDescription(description);
+                    
+                    RentalDTO rentalDTO = new RentalDTO();
+                    rentalDTO.setName(name);
+                    rentalDTO.setSurface(surface);
+                    rentalDTO.setPrice(price);
+                    rentalDTO.setDescription(description);
+
+                    Rental rental = mapper.toRental(rentalDTO);
                     rental.setOwner(owner);
                     
                     // Handle file upload if provided
@@ -87,13 +99,11 @@ public class RentalController {
                         picture != null 
                     && !picture.isEmpty()
                     ) {
-                        // Create uploads directory if it doesn't exist
                         File directory = new File(UPLOAD_DIR);
                         if (!directory.exists()) {
                             directory.mkdirs();
                         }
                         
-                        // Generate unique filename to avoid collisions
                         String originalFilename = picture.getOriginalFilename();
                         String fileExtension    = originalFilename.substring(originalFilename.lastIndexOf('.'));
                         String newFilename      = UUID.randomUUID().toString() + fileExtension;
@@ -156,13 +166,13 @@ public class RentalController {
                     "message", 
                     "Rental updated successfully"
                     );
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(new MessageResponseDTO("Rental updated successfully"));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rental not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponseDTO("Rental not found"));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating rental: " + e.getMessage());
+                    .body(new MessageResponseDTO("Error updating rental: " + e.getMessage()));
         }
     }
 }

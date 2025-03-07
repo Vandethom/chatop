@@ -1,8 +1,15 @@
 package com.chatop.api.controller;
 
+import com.chatop.api.mapper.EntityMapper;
 import com.chatop.api.model.User;
 import com.chatop.api.repository.UserRepository;
 import com.chatop.api.service.JwtUtil;
+
+import com.chatop.api.dto.request.LoginDTO;
+import com.chatop.api.dto.request.UserDTO;
+import com.chatop.api.dto.response.AuthResponseDTO;
+import com.chatop.api.dto.response.UserResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,23 +40,25 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private EntityMapper mapper;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         try {
-            // Store the original password temporarily
+            User   user             = mapper.toUser(userDTO);
             String originalPassword = user.getPassword();
             
-            // Set timestamps and encode password for database storage
             user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             user.setPassword(passwordEncoder.encode(originalPassword));
+
             User savedUser = userRepository.save(user);
             
             System.out.println("User saved with ID: " + savedUser.getId());
             
             try {
-                // Now authenticate with the original password, not the encoded one
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(user.getEmail(), originalPassword)
                 );
@@ -64,7 +73,7 @@ public class AuthController {
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
                 final String      jwt         = jwtUtil.generateToken(userDetails.getUsername());
                 
-                return ResponseEntity.ok(new AuthSuccess(jwt));
+                return ResponseEntity.ok(new AuthResponseDTO(jwt));
             }
         } catch (Exception e) {
             System.err.println("Registration error: " + e.getMessage());
@@ -74,18 +83,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.getEmail(), 
-                    loginRequest.getPassword()
+                    loginDTO.getEmail(), 
+                    loginDTO.getPassword()
                 )
         );
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
         final String      jwt         = jwtUtil.generateToken(userDetails.getUsername());
 
-        return ResponseEntity.ok(new AuthSuccess(jwt));
+        return ResponseEntity.ok(new AuthResponseDTO(jwt));
     }
 
     @GetMapping("/me")

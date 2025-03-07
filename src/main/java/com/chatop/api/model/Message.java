@@ -3,9 +3,11 @@ package com.chatop.api.model;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
+import com.chatop.api.utils.TimestampEntity;
+
 @Entity
 @Table(name = "MESSAGE")
-public class Message {
+public class Message implements TimestampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

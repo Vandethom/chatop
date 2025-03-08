@@ -4,14 +4,19 @@ import com.chatop.api.dto.request.LoginDTO;
 import com.chatop.api.dto.request.UserDTO;
 import com.chatop.api.dto.response.AuthResponseDTO;
 import com.chatop.api.dto.response.UserResponseDTO;
+import com.chatop.api.model.User;  // Add this import
 import com.chatop.api.utils.JwtUtil;
 import com.chatop.api.service.interfaces.IUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;  // Add this import
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import jakarta.validation.Valid;
 
 @RestController
@@ -38,12 +43,28 @@ public class AuthController {
     }
     // retirer requestHeader("authorization")
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> me(@RequestHeader("Authorization") String token) {
-        //TODO : debug + implémenter à chaque route usant le TOKEN
-        SecurityContextHolder.getContext().getAuthentication().getPrincipal().getName()
+    public ResponseEntity<UserResponseDTO> me() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
+        String         email          = userDetails.getUsername();
 
-        String jwt   = token.substring(7);
-        String email = jwtUtil.extractUsername(jwt);
-        return ResponseEntity.ok(userService.getUserProfile(email));
+        User             user       = userService.findByEmail(email);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        // Map to response DTO
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setId(user.getId());
+        userResponseDTO.setName(user.getName());
+        userResponseDTO.setEmail(user.getEmail());
+        if (user.getCreatedAt() != null) {
+            userResponseDTO.setCreated_at(dateFormat.format(user.getCreatedAt()));
+        }
+        
+        if (user.getUpdatedAt() != null) {
+            userResponseDTO.setUpdated_at(dateFormat.format(user.getUpdatedAt()));
+        }
+
+        return ResponseEntity.ok(userResponseDTO);
     }
 }

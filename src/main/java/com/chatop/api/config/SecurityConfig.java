@@ -58,6 +58,7 @@ public class SecurityConfig {
         return source;
     }
 
+    // TODO: A mettre dans webconfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -66,9 +67,6 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
-                    // Explicitly permit all rental endpoints for testing - to remove
-                    .requestMatchers("/api/rentals/**").authenticated() 
-                    .requestMatchers("/api/messages/**").authenticated()
                     .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->

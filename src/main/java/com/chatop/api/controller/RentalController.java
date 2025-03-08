@@ -5,8 +5,10 @@ import com.chatop.api.dto.response.MessageResponseDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
 import com.chatop.api.dto.response.RentalsResponseDTO;
 import com.chatop.api.model.User;
-import com.chatop.api.service.RentalService;
-import com.chatop.api.service.UserService;
+
+import com.chatop.api.service.interfaces.IRentalService;
+import com.chatop.api.service.interfaces.IUserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +27,13 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/rentals")
 public class RentalController {
 
-    private final RentalService rentalService;
-    private final UserService userService;
+    private final IRentalService rentalService;
+    private final IUserService userService;
 
     @Autowired
-    public RentalController(RentalService rentalService, UserService userService) {
+    public RentalController(IRentalService rentalService, IUserService userService) {
         this.rentalService = rentalService;
-        this.userService = userService;
+        this.userService   = userService;
     }
 
     @GetMapping
@@ -47,28 +49,35 @@ public class RentalController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResponseDTO> createRental(
-            @RequestPart("name") String name,
-            @RequestPart("surface") Double surface,
-            @RequestPart("price") Double price,
-            @RequestPart("description") String description,
-            @RequestPart(value = "picture", required = false) MultipartFile picture) {
-        
-        // Create a RentalDTO manually from form parts
-        RentalDTO rentalDTO = new RentalDTO();
-        rentalDTO.setName(name);
-        rentalDTO.setSurface(surface);
-        rentalDTO.setPrice(price);
-        rentalDTO.setDescription(description);
-        
-        // Get current authenticated user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
-        User           owner          = userService.findByEmail(userDetails.getUsername());
-        
-        rentalService.createRental(rentalDTO, picture, owner);
-        
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new MessageResponseDTO("Rental created successfully"));
+            @RequestParam("name") String name,
+            @RequestParam("surface") Double surface,
+            @RequestParam("price") Double price,
+            @RequestParam("description") String description,
+            @RequestParam(value = "picture", required = false) MultipartFile picture) {
+    
+        try {
+            // Create a RentalDTO manually from form parts
+            RentalDTO rentalDTO = new RentalDTO();
+            rentalDTO.setName(name);
+            rentalDTO.setSurface(surface);
+            rentalDTO.setPrice(price);
+            rentalDTO.setDescription(description);
+    
+            // Get current authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User owner = userService.findByEmail(userDetails.getUsername());
+    
+            rentalService.createRental(rentalDTO, picture, owner);
+    
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new MessageResponseDTO("Rental created successfully"));
+        } catch (Exception e) {
+            System.err.println("Error creating rental: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponseDTO("Error: " + e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")

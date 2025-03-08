@@ -10,11 +10,11 @@ import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.chatop.api.utils.TimestampEntity;
+import com.chatop.api.utils.TimestampAware;
 
 @Entity
 @Table(name = "USER")
-public class User implements TimestampEntity {
+public class User implements TimestampAware {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

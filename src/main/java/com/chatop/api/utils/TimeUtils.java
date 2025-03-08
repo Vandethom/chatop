@@ -10,13 +10,12 @@ public class TimeUtils {
         return new Timestamp(System.currentTimeMillis());
     }
     
-    public void initializeTimestamps(TimestampEntity entity) {
+    public void initializeTimestamps(TimestampAware entity) {
         Timestamp now = getCurrentTimestamp();
-        entity.setCreatedAt(now);
-        entity.setUpdatedAt(now);
+        entity.initializeTimestamps(now);
     }
     
-    public void updateTimestamp(TimestampEntity entity) {
-        entity.setUpdatedAt(getCurrentTimestamp());
+    public void updateTimestamp(TimestampAware entity) {
+        entity.updateTimestamp(getCurrentTimestamp());
     }
 }

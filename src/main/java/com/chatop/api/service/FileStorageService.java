@@ -1,7 +1,10 @@
 package com.chatop.api.service;
 
 import com.chatop.api.exception.FileStorageException;
-import org.springframework.beans.factory.annotation.Value;
+import com.chatop.api.service.interfaces.IFileStorageService;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,29 +16,43 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class FileStorageService {
+public class FileStorageService implements IFileStorageService {
     
     private static final String UPLOAD_DIR = "uploads/";
     
+    @PostConstruct
+    public void init() {
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIR));
+            System.out.println("Upload directory initialized: " + UPLOAD_DIR);
+        } catch (IOException e) {
+            System.err.println("Could not create upload directory: " + e.getMessage());
+            throw new RuntimeException("Could not create upload directory!", e);
+        }
+    }
+
+    @Override
     public String storeFile(MultipartFile file) {
         try {
-            // Create uploads directory if it doesn't exist
             File directory = new File(UPLOAD_DIR);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
             
-            // Generate unique filename to avoid collisions
             String originalFilename = file.getOriginalFilename();
-            String fileExtension    = originalFilename.substring(originalFilename.lastIndexOf('.'));
-            String newFilename      = UUID.randomUUID().toString() + fileExtension;
-            Path filePath           = Paths.get(UPLOAD_DIR + newFilename);
+            if (originalFilename == null) {
+                originalFilename = "file.bin";
+            }
+            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            String newFilename   = UUID.randomUUID().toString() + fileExtension;
             
+            Path filePath = Paths.get(UPLOAD_DIR + newFilename);
+
             Files.write(filePath, file.getBytes());
             
             return "/uploads/" + newFilename;
         } catch (IOException e) {
-            throw new FileStorageException("Failed to store file: " + e.getMessage());
+            throw new FileStorageException("Failed to store file: " + e.getMessage(), e);
         }
     }
 }

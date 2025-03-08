@@ -3,11 +3,11 @@ package com.chatop.api.model;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
-import com.chatop.api.utils.TimestampEntity;
+import com.chatop.api.utils.TimestampAware;
 
 @Entity
 @Table(name = "RENTAL")
-public class Rental implements TimestampEntity {
+public class Rental implements TimestampAware {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,23 +61,23 @@ public class Rental implements TimestampEntity {
     public Rental() {}
 
     public Rental(
-        String name, 
-        Double surface, 
-        Double price, 
-        String picture, 
-        String description, 
-        User owner, 
+        String    name, 
+        Double    surface, 
+        Double    price, 
+        String    picture, 
+        String    description, 
+        User      owner, 
         Timestamp createdAt, 
         Timestamp updatedAt
         ) {
-            this.name = name;
-            this.surface = surface;
-            this.price = price;
-            this.picture = picture;
+            this.name        = name;
+            this.surface     = surface;
+            this.price       = price;
+            this.picture     = picture;
             this.description = description;
-            this.owner = owner;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
+            this.owner       = owner;
+            this.createdAt   = createdAt;
+            this.updatedAt   = updatedAt;
         }
 
     public Long getId() {

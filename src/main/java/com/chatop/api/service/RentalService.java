@@ -71,13 +71,34 @@ public class RentalService implements IRentalService {
     }
 
     @Override
-    public void updateRental(Long id, RentalDTO rentalDTO) {
+    public void updateRental(Long id, RentalDTO rentalDTO, MultipartFile picture, User currentUser) {
         Rental rental = getRentalEntityById(id);
         
-        rental.setName(rentalDTO.getName());
-        rental.setSurface(rentalDTO.getSurface());
-        rental.setPrice(rentalDTO.getPrice());
-        rental.setDescription(rentalDTO.getDescription());
+        if (!rental.getOwner().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You don't have permission to update this rental");
+        }
+        
+        if (rentalDTO.getName() != null) {
+            rental.setName(rentalDTO.getName());
+        }
+        
+        if (rentalDTO.getSurface() != null) {
+            rental.setSurface(rentalDTO.getSurface());
+        }
+        
+        if (rentalDTO.getPrice() != null) {
+            rental.setPrice(rentalDTO.getPrice());
+        }
+        
+        if (rentalDTO.getDescription() != null) {
+            rental.setDescription(rentalDTO.getDescription());
+        }
+        
+        // Handle file upload if provided
+        if (picture != null && !picture.isEmpty()) {
+            String picturePath = fileStorageService.storeFile(picture);
+            rental.setPicture(picturePath);
+        }
         
         timeUtils.updateTimestamp(rental);
         rentalRepository.save(rental);

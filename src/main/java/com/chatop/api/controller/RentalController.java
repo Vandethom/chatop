@@ -80,12 +80,35 @@ public class RentalController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResponseDTO> updateRental(
             @PathVariable Long id,
-            @Valid @RequestBody RentalDTO rentalDTO) {
+            @RequestParam(value = "name",        required = false) String        name,
+            @RequestParam(value = "surface",     required = false) Double        surface,
+            @RequestParam(value = "price",       required = false) Double        price,
+            @RequestParam(value = "description", required = false) String        description,
+            @RequestParam(value = "picture",     required = false) MultipartFile picture) {
         
-        rentalService.updateRental(id, rentalDTO);
-        return ResponseEntity.ok(new MessageResponseDTO("Rental updated successfully"));
+            try {
+                // Create a RentalDTO from form parts
+                RentalDTO rentalDTO = new RentalDTO();
+                if (name        != null) rentalDTO.setName(name);
+                if (surface     != null) rentalDTO.setSurface(surface);
+                if (price       != null) rentalDTO.setPrice(price);
+                if (description != null) rentalDTO.setDescription(description);
+                
+                // Get current authenticated user for security check
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
+                User           currentUser    = userService.findByEmail(userDetails.getUsername());
+                
+                // Update the rental with possible new picture
+                rentalService.updateRental(id, rentalDTO, picture, currentUser);
+                
+                return ResponseEntity.ok(new MessageResponseDTO("Rental updated successfully"));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new MessageResponseDTO("Error: " + e.getMessage()));
+            }
     }
 }

@@ -13,7 +13,7 @@ public interface IRentalService {
     RentalResponseDTO getRentalById(Long id);
     void createRental(RentalDTO rentalDTO, MultipartFile picture, User owner);
     void updateRental(Long id, RentalDTO rentalDTO);
-    
+    void updateRental(Long id, RentalDTO rentalDTO, MultipartFile picture, User currentUser);
     // Add this method to be used by MessageService
     Rental getRentalEntityById(Long id);
 }

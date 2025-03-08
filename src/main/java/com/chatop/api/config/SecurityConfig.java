@@ -52,6 +52,11 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
+                    .requestMatchers(
+    "/swagger-ui.html", 
+    "/swagger-ui/**", 
+    "/v3/api-docs/**", 
+    "/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->

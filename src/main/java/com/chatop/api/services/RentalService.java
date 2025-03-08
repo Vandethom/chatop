@@ -2,6 +2,9 @@ package com.chatop.api.services;
 
 import com.chatop.api.dto.request.RentalDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
+import com.chatop.api.dto.request.RentalUpdateDTO;
+import com.chatop.api.exceptions.ForbiddenException;
+import com.chatop.api.exceptions.FileStorageException;
 import com.chatop.api.exceptions.ResourceNotFoundException;
 import com.chatop.api.mappers.interfaces.IRentalMapper;
 import com.chatop.api.models.Rental;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -71,36 +75,42 @@ public class RentalService implements IRentalService {
     }
 
     @Override
-    public void updateRental(Long id, RentalDTO rentalDTO, MultipartFile picture, User currentUser) {
+    public void updateRental(Long id, RentalUpdateDTO rentalDTO, MultipartFile picture, User currentUser) {
         Rental rental = getRentalEntityById(id);
-        
+
+        // Check ownership with proper exception
         if (!rental.getOwner().getId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You don't have permission to update this rental");
+            throw new ForbiddenException("You don't have permission to update this rental");
         }
-        
-        if (rentalDTO.getName() != null) {
-            rental.setName(rentalDTO.getName());
+
+        try {
+            // Update fields if provided
+            if (rentalDTO.getName() != null) {
+                rental.setName(rentalDTO.getName());
+            }
+
+            if (rentalDTO.getSurface() != null) {
+                rental.setSurface(rentalDTO.getSurface());
+            }
+
+            if (rentalDTO.getPrice() != null) {
+                rental.setPrice(rentalDTO.getPrice());
+            }
+
+            if (rentalDTO.getDescription() != null) {
+                rental.setDescription(rentalDTO.getDescription());
+            }
+
+            // Handle file upload with better error handling
+            if (picture != null && !picture.isEmpty()) {
+                String picturePath = fileStorageService.storeFile(picture);
+                rental.setPicture(picturePath);
+            }
+
+            timeUtils.updateTimestamp(rental);
+            rentalRepository.save(rental);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating rental: " + e.getMessage(), e);
         }
-        
-        if (rentalDTO.getSurface() != null) {
-            rental.setSurface(rentalDTO.getSurface());
-        }
-        
-        if (rentalDTO.getPrice() != null) {
-            rental.setPrice(rentalDTO.getPrice());
-        }
-        
-        if (rentalDTO.getDescription() != null) {
-            rental.setDescription(rentalDTO.getDescription());
-        }
-        
-        // Handle file upload if provided
-        if (picture != null && !picture.isEmpty()) {
-            String picturePath = fileStorageService.storeFile(picture);
-            rental.setPicture(picturePath);
-        }
-        
-        timeUtils.updateTimestamp(rental);
-        rentalRepository.save(rental);
     }
 }

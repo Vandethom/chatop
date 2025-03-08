@@ -1,25 +1,31 @@
 package com.chatop.api.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description = "Message creation request")
 public class MessageDTO {
     
-    @NotBlank(message = "Message content is required")
-    private String message;
+    @Schema(description = "ID of the rental this message is about", example = "42")
+    @NotNull(message = "Rental ID is required")
+    private Long rental_id;
     
+    @Schema(description = "ID of the user sending the message", example = "15")
     @NotNull(message = "User ID is required")
     private Long user_id;
     
-    @NotNull(message = "Rental ID is required")
-    private Long rental_id;
+    @Schema(description = "Message content", example = "I'm interested in renting this property. Is it still available?")
+    @NotBlank(message = "Message content is required")
+    private String message;
 
-    public String getMessage() {
-        return message;
+    // Getters and Setters
+    public Long getRental_id() {
+        return rental_id;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setRental_id(Long rental_id) {
+        this.rental_id = rental_id;
     }
 
     public Long getUser_id() {
@@ -30,11 +36,11 @@ public class MessageDTO {
         this.user_id = user_id;
     }
 
-    public Long getRental_id() {
-        return rental_id;
+    public String getMessage() {
+        return message;
     }
 
-    public void setRental_id(Long rental_id) {
-        this.rental_id = rental_id;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

@@ -1,12 +1,26 @@
 package com.chatop.api.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "User profile response")
 public class UserResponseDTO {
-    private Long   id;
+    
+    @Schema(description = "User's unique identifier", example = "42")
+    private Long id;
+    
+    @Schema(description = "User's full name", example = "John Doe")
     private String name;
+    
+    @Schema(description = "User's email address", example = "john.doe@example.com")
     private String email;
+    
+    @Schema(description = "Account creation date in ISO format", example = "2025-01-15T09:30:21.000Z")
     private String created_at;
+    
+    @Schema(description = "Account last update date in ISO format", example = "2025-03-05T14:22:43.000Z")
     private String updated_at;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }

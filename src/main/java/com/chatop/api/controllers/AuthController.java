@@ -7,10 +7,16 @@ import com.chatop.api.dto.response.UserResponseDTO;
 import com.chatop.api.models.User;
 import com.chatop.api.services.interfaces.IUserService;
 import com.chatop.api.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;  // Add this import
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -21,38 +27,66 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Endpoints for user registration, login and profile")
 public class AuthController {
 
     private final IUserService userService;
-    private final JwtUtil     jwtUtil;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public AuthController(IUserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
-        this.jwtUtil     = jwtUtil;
+        this.jwtUtil = jwtUtil;
     }
 
+    @Operation(
+        summary = "Register a new user", 
+        description = "Creates a new user account and returns a JWT token"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User successfully registered",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.registerUser(userDTO));
     }
 
+    @Operation(
+        summary = "Log in a user", 
+        description = "Authenticates a user and returns a JWT token"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User successfully logged in",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDTO.class))),
+        @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         return ResponseEntity.ok(userService.authenticateUser(loginDTO));
     }
-    // retirer requestHeader("authorization")
+
+    @Operation(
+        summary = "Get current user profile", 
+        description = "Returns the profile information of the currently authenticated user"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User profile returned",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+        @ApiResponse(responseCode = "401", description = "Not authenticated")
+    })
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails    userDetails    = (UserDetails) authentication.getPrincipal();
-        String         email          = userDetails.getUsername();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();
 
-        User             user       = userService.findByEmail(email);
+        User user = userService.findByEmail(email);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        // Map to response DTO
+        
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(user.getId());
         userResponseDTO.setName(user.getName());

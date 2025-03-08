@@ -1,30 +1,20 @@
 package com.chatop.api.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
-@Schema(description = "Rental creation/update request")
-public class RentalDTO {
+@Schema(description = "Rental update request")
+public class RentalUpdateDTO {
     
     @Schema(description = "Name of the rental property", example = "Cozy Studio in Paris")
-    @NotBlank(message = "Name is required")
     private String name;
     
     @Schema(description = "Surface area in square meters", example = "45.5")
-    @NotNull(message = "Surface is required")
-    @Positive(message = "Surface must be positive")
     private Double surface;
     
     @Schema(description = "Monthly rental price", example = "1200.0")
-    @NotNull(message = "Price is required")
-    @Positive(message = "Price must be positive")
     private Double price;
     
-    @Schema(description = "Detailed description of the property", 
-            example = "Beautiful studio apartment with a view of the Eiffel Tower")
-    @NotBlank(message = "Description is required")
+    @Schema(description = "Detailed description of the property")
     private String description;
 
     // Getters and Setters

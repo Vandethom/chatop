@@ -1,5 +1,7 @@
 package com.chatop.api.dto.response;
 
+import java.sql.Timestamp;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Message response")
@@ -22,20 +24,19 @@ public class MessageResponseDTO {
     private String status;
     
     @Schema(description = "Creation date in ISO format", example = "2025-03-08T16:45:22.000Z")
-    private String created_at;
+    private Timestamp created_at;
     
     @Schema(description = "Last update date in ISO format", example = "2025-03-08T16:45:22.000Z")
-    private String updated_at;
+    private Timestamp updated_at;
 
-    // Constructor for simple status messages
     public MessageResponseDTO() {
     }
-
-    public MessageResponseDTO(String status) {
-        this.status = status;
+    
+    public MessageResponseDTO(String message) {
+        this.message = message;
     }
 
-    // Getters and Setters
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -68,27 +69,19 @@ public class MessageResponseDTO {
         this.message = message;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCreated_at() {
+    public Timestamp getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(String created_at) {
+    public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
     }
 
-    public String getUpdated_at() {
+    public Timestamp getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(String updated_at) {
+    public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
     }
 }

@@ -32,7 +32,6 @@ public class RentalResponseDTO {
     @Schema(description = "Last update date in ISO format", example = "2025-03-08T14:15:22.000Z")
     private String updated_at;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

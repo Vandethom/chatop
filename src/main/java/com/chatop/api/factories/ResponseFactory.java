@@ -5,80 +5,88 @@ import com.chatop.api.dto.response.MessageResponseDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
 import com.chatop.api.dto.response.RentalsResponseDTO;
 import com.chatop.api.dto.response.UserResponseDTO;
-import com.chatop.api.dto.response.ValidationErrorResponseDTO;
-
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class ResponseFactory {
-    // ------------------------------ General ------------------------------ //
-    public ResponseEntity<ValidationErrorResponseDTO> validationError(Map<String, String> errors) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ValidationErrorResponseDTO("Validation failed", errors));
+    public ResponseEntity<Object> ok(Object body) {
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    public ResponseEntity<MessageResponseDTO> success(String message) {
-        return ResponseEntity.ok(new MessageResponseDTO(message));
+    public ResponseEntity<Object> created(Object body) {
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
-    // ------------------------------ User ------------------------------ //
-    public ResponseEntity<UserResponseDTO> successUser(UserResponseDTO user) {
-        return ResponseEntity.ok(user);
+
+    public ResponseEntity<Object> noContent() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
-    public ResponseEntity<AuthResponseDTO> successAuth(AuthResponseDTO auth) {
-        return ResponseEntity.ok(auth);
+
+    public ResponseEntity<Object> badRequest(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    // ----------------------------- Rentals ----------------------------- //
+
+    public ResponseEntity<Object> notFound(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<Object> conflict(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    public ResponseEntity<Object> error(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public ResponseEntity<AuthResponseDTO> successAuth(AuthResponseDTO authResponse) {
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<UserResponseDTO> successUser(UserResponseDTO userResponse) {
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<MessageResponseDTO> successMessage(MessageResponseDTO message) {
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Map<String, List<MessageResponseDTO>>> successMessages(List<MessageResponseDTO> messages) {
+        Map<String, List<MessageResponseDTO>> response = new HashMap<>();
+        response.put("messages", messages);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<MessageResponseDTO> created(String message) {
+        MessageResponseDTO response = new MessageResponseDTO();
+        response.setMessage(message);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     public ResponseEntity<RentalResponseDTO> successRental(RentalResponseDTO rental) {
-        return ResponseEntity.ok(rental);
+        return new ResponseEntity<>(rental, HttpStatus.OK);
     }
 
     public ResponseEntity<RentalsResponseDTO> successRentals(List<RentalResponseDTO> rentals) {
-        return ResponseEntity.ok(new RentalsResponseDTO(rentals));
+        RentalsResponseDTO response = new RentalsResponseDTO(rentals);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<MessageResponseDTO> unauthorized(String message) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new MessageResponseDTO(message));
-    }
-    
-    // ----------------------------- Messages ----------------------------- //
-    public ResponseEntity<MessageResponseDTO> successMessage(MessageResponseDTO message) {
-        return ResponseEntity.ok(message);
-    }
-
-    public ResponseEntity<List<MessageResponseDTO>> successMessages(List<MessageResponseDTO> messages) {
-        return ResponseEntity.ok(messages);
-    }
-    
-    public ResponseEntity<MessageResponseDTO> created(String message) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new MessageResponseDTO(message));
-    }
-
-    public ResponseEntity<MessageResponseDTO> notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new MessageResponseDTO(message));
-    }
-
-    public ResponseEntity<MessageResponseDTO> forbidden(String message) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new MessageResponseDTO(message));
-    }
-
-    public ResponseEntity<MessageResponseDTO> badRequest(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResponseDTO(message));
-    }
-
-    public ResponseEntity<MessageResponseDTO> error(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new MessageResponseDTO("Error: " + message));
+    public ResponseEntity<MessageResponseDTO> success(String message) {
+        MessageResponseDTO responseDTO = new MessageResponseDTO(message);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

@@ -32,8 +32,8 @@ public class UserMapper implements IUserMapper {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        dto.setCreated_at(user.getCreatedAt().toLocalDateTime().format(formatter));
-        dto.setUpdated_at(user.getUpdatedAt().toLocalDateTime().format(formatter));
+        dto.setCreated_at(user.getCreatedAt());
+        dto.setUpdated_at(user.getUpdatedAt());
         return dto;
     }
     

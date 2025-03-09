@@ -6,7 +6,8 @@ import com.chatop.api.dto.request.MessageDTO;
 import com.chatop.api.dto.response.MessageResponseDTO;
 
 import com.chatop.api.factories.ResponseFactory;
-
+import com.chatop.api.models.User;
+import com.chatop.api.services.AuthenticationService;
 import com.chatop.api.services.interfaces.IMessageService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,22 +24,26 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
 @Tag(name = "Messages", description = "Endpoints for managing messages between users")
 public class MessageController {
 
-    private final IMessageService messageService;
-    private final ResponseFactory responseFactory;
+    private final IMessageService       messageService;
+    private final ResponseFactory       responseFactory;
+    private final AuthenticationService authService;
 
     @Autowired
     public MessageController(
-        IMessageService messageService,
-        ResponseFactory responseFactory
+        IMessageService       messageService,
+        ResponseFactory       responseFactory,
+        AuthenticationService authService
         ) {
             this.messageService  = messageService;
             this.responseFactory = responseFactory;
+            this.authService     = authService;
     }
 
     @Operation(
@@ -57,7 +62,10 @@ public class MessageController {
         @Parameter(description = "Message details", required = true)
         @Valid @RequestBody MessageDTO messageDTO
     ) {
-        messageService.createMessage(messageDTO);
+        User currentUser = authService.getCurrentUser();
+        
+        messageService.createMessage(messageDTO, currentUser);
+        
         return responseFactory.created(MessageConstants.MESSAGE_CREATED);
     }
 
@@ -71,7 +79,7 @@ public class MessageController {
         @ApiResponse(responseCode = "403", description = "Not authorized")
     })
     @GetMapping
-    public ResponseEntity<List<MessageResponseDTO>> getAllMessages() {
+    public ResponseEntity<Map<String, List<MessageResponseDTO>>> getAllMessages() {
         List<MessageResponseDTO> messages = messageService.getAllMessages();
         
         return responseFactory.successMessages(messages);

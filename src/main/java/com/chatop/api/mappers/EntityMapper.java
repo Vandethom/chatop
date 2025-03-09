@@ -9,7 +9,6 @@ import com.chatop.api.models.Message;
 import com.chatop.api.models.Rental;
 import com.chatop.api.models.User;
 
-import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;

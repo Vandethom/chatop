@@ -1,11 +1,11 @@
 package com.chatop.api.services;
 
+import com.chatop.api.constants.MessageConstants;
 import com.chatop.api.dto.request.RentalDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
 import com.chatop.api.dto.request.RentalUpdateDTO;
-import com.chatop.api.exceptions.ForbiddenException;
-import com.chatop.api.exceptions.FileStorageException;
 import com.chatop.api.exceptions.ResourceNotFoundException;
+import com.chatop.api.exceptions.UnauthorizedException;
 import com.chatop.api.mappers.interfaces.IRentalMapper;
 import com.chatop.api.models.Rental;
 import com.chatop.api.models.User;
@@ -17,28 +17,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class RentalService implements IRentalService {
 
-    private final RentalRepository    rentalRepository;
-    private final IRentalMapper       mapper;
-    private final IFileStorageService fileStorageService;
-    private final TimeUtils           timeUtils;
+    private final RentalRepository      rentalRepository;
+    private final IRentalMapper         mapper;
+    private final IFileStorageService   fileStorageService;
+    private final TimeUtils             timeUtils;
+    private final AuthenticationService authService;
 
     @Autowired
     public RentalService(
-            RentalRepository    rentalRepository,
-            IRentalMapper       mapper,
-            IFileStorageService fileStorageService,
-            TimeUtils           timeUtils
+            RentalRepository      rentalRepository,
+            IRentalMapper         mapper,
+            IFileStorageService   fileStorageService,
+            TimeUtils             timeUtils,
+            AuthenticationService authService
             ) {
                 this.rentalRepository   = rentalRepository;
                 this.mapper             = mapper;
                 this.fileStorageService = fileStorageService;
                 this.timeUtils          = timeUtils;
+                this.authService        = authService;
     }
 
     @Override
@@ -75,42 +77,37 @@ public class RentalService implements IRentalService {
     }
 
     @Override
-    public void updateRental(Long id, RentalUpdateDTO rentalDTO, MultipartFile picture, User currentUser) {
-        Rental rental = getRentalEntityById(id);
+    public void updateRental(Long id, RentalUpdateDTO rentalDTO, MultipartFile picture) {
+        Rental rental = rentalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.RENTAL_NOT_FOUND + id));
+        User currentUser = authService.getCurrentUser();
 
-        // Check ownership with proper exception
+        if (currentUser == null) {
+            throw new UnauthorizedException(MessageConstants.AUTHENTICATION_REQUIRED);
+        }
+
         if (!rental.getOwner().getId().equals(currentUser.getId())) {
-            throw new ForbiddenException("You don't have permission to update this rental");
+            throw new UnauthorizedException(MessageConstants.UNAUTHORIZED_RENTAL_UPDATE);
         }
 
-        try {
-            // Update fields if provided
-            if (rentalDTO.getName() != null) {
-                rental.setName(rentalDTO.getName());
-            }
-
-            if (rentalDTO.getSurface() != null) {
-                rental.setSurface(rentalDTO.getSurface());
-            }
-
-            if (rentalDTO.getPrice() != null) {
-                rental.setPrice(rentalDTO.getPrice());
-            }
-
-            if (rentalDTO.getDescription() != null) {
-                rental.setDescription(rentalDTO.getDescription());
-            }
-
-            // Handle file upload with better error handling
-            if (picture != null && !picture.isEmpty()) {
-                String picturePath = fileStorageService.storeFile(picture);
-                rental.setPicture(picturePath);
-            }
-
-            timeUtils.updateTimestamp(rental);
-            rentalRepository.save(rental);
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating rental: " + e.getMessage(), e);
+        if (rentalDTO.getName() != null) {
+            rental.setName(rentalDTO.getName());
         }
+        if (rentalDTO.getSurface() != null) {
+            rental.setSurface(rentalDTO.getSurface());
+        }
+        if (rentalDTO.getPrice() != null) {
+            rental.setPrice(rentalDTO.getPrice());
+        }
+        if (rentalDTO.getDescription() != null) {
+            rental.setDescription(rentalDTO.getDescription());
+        }
+        if (picture != null && !picture.isEmpty()) {
+            String picturePath = fileStorageService.storeFile(picture);
+            rental.setPicture(picturePath);
+        }
+
+        timeUtils.updateTimestamp(rental);
+        rentalRepository.save(rental);
     }
 }

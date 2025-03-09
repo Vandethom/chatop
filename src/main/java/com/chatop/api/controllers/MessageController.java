@@ -1,8 +1,14 @@
 package com.chatop.api.controllers;
 
+import com.chatop.api.constants.MessageConstants;
+
 import com.chatop.api.dto.request.MessageDTO;
 import com.chatop.api.dto.response.MessageResponseDTO;
+
+import com.chatop.api.factories.ResponseFactory;
+
 import com.chatop.api.services.interfaces.IMessageService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +18,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +30,15 @@ import java.util.List;
 public class MessageController {
 
     private final IMessageService messageService;
+    private final ResponseFactory responseFactory;
 
     @Autowired
-    public MessageController(IMessageService messageService) {
-        this.messageService = messageService;
+    public MessageController(
+        IMessageService messageService,
+        ResponseFactory responseFactory
+        ) {
+            this.messageService  = messageService;
+            this.responseFactory = responseFactory;
     }
 
     @Operation(
@@ -48,9 +58,7 @@ public class MessageController {
         @Valid @RequestBody MessageDTO messageDTO
     ) {
         messageService.createMessage(messageDTO);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageResponseDTO("Message sent successfully"));
+        return responseFactory.created(MessageConstants.MESSAGE_CREATED);
     }
 
     @Operation(
@@ -65,7 +73,8 @@ public class MessageController {
     @GetMapping
     public ResponseEntity<List<MessageResponseDTO>> getAllMessages() {
         List<MessageResponseDTO> messages = messageService.getAllMessages();
-        return ResponseEntity.ok(messages);
+        
+        return responseFactory.successMessages(messages);
     }
 
     @Operation(
@@ -83,6 +92,7 @@ public class MessageController {
         @Parameter(description = "ID of the message to retrieve") @PathVariable Long id
     ) {
         MessageResponseDTO message = messageService.getMessageById(id);
-        return ResponseEntity.ok(message);
+        
+        return responseFactory.successMessage(message);
     }
 }

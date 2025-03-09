@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IMessageService {
     void createMessage(MessageDTO messageDTO);
+    
     List<MessageResponseDTO> getAllMessages();
-    MessageResponseDTO getMessageById(Long id);
+    MessageResponseDTO       getMessageById(Long id);
 }

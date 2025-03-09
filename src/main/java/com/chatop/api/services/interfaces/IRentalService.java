@@ -11,8 +11,18 @@ import java.util.List;
 
 public interface IRentalService {
     List<RentalResponseDTO> getAllRentals();
-    RentalResponseDTO getRentalById(Long id);
-    void createRental(RentalDTO rentalDTO, MultipartFile picture, User owner);
-    void updateRental(Long id, RentalUpdateDTO rentalDTO, MultipartFile picture, User currentUser);
-    Rental getRentalEntityById(Long id);
+    RentalResponseDTO       getRentalById(Long id);
+    Rental                  getRentalEntityById(Long id);
+
+    void createRental(
+        RentalDTO     rentalDTO, 
+        MultipartFile picture, 
+        User          owner
+        );
+        
+    void updateRental(
+        Long            id, 
+        RentalUpdateDTO rentalDTO,
+        MultipartFile   picture
+        );
 }

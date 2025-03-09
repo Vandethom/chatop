@@ -1,5 +1,6 @@
 package com.chatop.api.services;
 
+import com.chatop.api.constants.MessageConstants;
 import com.chatop.api.dto.request.LoginDTO;
 import com.chatop.api.dto.request.UserDTO;
 import com.chatop.api.dto.response.AuthResponseDTO;
@@ -99,12 +100,12 @@ public class UserService implements IUserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.USER_EMAIL_NOT_FOUND + email));
     }
     
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.USER_NOT_FOUND + id));
     }
 }

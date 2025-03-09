@@ -4,9 +4,14 @@ import com.chatop.api.dto.request.LoginDTO;
 import com.chatop.api.dto.request.UserDTO;
 import com.chatop.api.dto.response.AuthResponseDTO;
 import com.chatop.api.dto.response.UserResponseDTO;
+
+import com.chatop.api.factories.ResponseFactory;
+import com.chatop.api.mappers.interfaces.IUserMapper;
 import com.chatop.api.models.User;
+import com.chatop.api.services.AuthenticationService;
 import com.chatop.api.services.interfaces.IUserService;
-import com.chatop.api.utils.JwtUtil;
+
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,13 +21,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,13 +30,22 @@ import jakarta.validation.Valid;
 @Tag(name = "Authentication", description = "Endpoints for user registration, login and profile")
 public class AuthController {
 
-    private final IUserService userService;
-    private final JwtUtil jwtUtil;
+    private final IUserService          userService;
+    private final ResponseFactory       responseFactory;
+    private final AuthenticationService authService;
+    private final IUserMapper           userMapper;
 
     @Autowired
-    public AuthController(IUserService userService, JwtUtil jwtUtil) {
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
+    public AuthController(
+        IUserService          userService, 
+        ResponseFactory       responseFactory,
+        AuthenticationService authService,
+        IUserMapper           userMapper
+        ) {
+            this.userService     = userService;
+            this.responseFactory = responseFactory;
+            this.authService     = authService;
+            this.userMapper      = userMapper;
     }
 
     @Operation(
@@ -50,7 +59,9 @@ public class AuthController {
     })
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.registerUser(userDTO));
+        AuthResponseDTO authResponse = userService.registerUser(userDTO);
+
+        return responseFactory.successAuth(authResponse);
     }
 
     @Operation(
@@ -64,7 +75,9 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
-        return ResponseEntity.ok(userService.authenticateUser(loginDTO));
+        AuthResponseDTO authResponse = userService.authenticateUser(loginDTO);
+    
+        return responseFactory.successAuth(authResponse);
     }
 
     @Operation(
@@ -78,27 +91,9 @@ public class AuthController {
     })
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> me() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
-
-        User user = userService.findByEmail(email);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        User            user    = authService.getCurrentUser();
+        UserResponseDTO userDTO = userMapper.toResponseDTO(user);
         
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setId(user.getId());
-        userResponseDTO.setName(user.getName());
-        userResponseDTO.setEmail(user.getEmail());
-        if (user.getCreatedAt() != null) {
-            userResponseDTO.setCreated_at(dateFormat.format(user.getCreatedAt()));
-        }
-        
-        if (user.getUpdatedAt() != null) {
-            userResponseDTO.setUpdated_at(dateFormat.format(user.getUpdatedAt()));
-        }
-
-        return ResponseEntity.ok(userResponseDTO);
+        return responseFactory.successUser(userDTO);
     }
 }

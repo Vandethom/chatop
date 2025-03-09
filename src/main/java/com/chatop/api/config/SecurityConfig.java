@@ -27,6 +27,8 @@ public class SecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
     public SecurityConfig(
             @Lazy JwtRequestFilter jwtRequestFilter,
             CorsConfigurationSource corsConfigurationSource) {
@@ -53,12 +55,15 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
                     .requestMatchers(
-    "/swagger-ui.html", 
-    "/swagger-ui/**", 
-    "/v3/api-docs/**", 
-    "/api-docs/**").permitAll()
-                    .anyRequest().authenticated()
-            )
+                        "/swagger-ui.html", 
+                        "/swagger-ui/**", 
+                        "/v3/api-docs/**", 
+                        "/api-docs/**").permitAll()
+                                          .anyRequest().authenticated()
+            )  
+            .exceptionHandling(exceptionHandling -> 
+                exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            )   
             .sessionManagement(sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );

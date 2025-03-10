@@ -11,13 +11,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
 public class LocalFileStorageProvider implements FileStorageProvider {
 
     private final Path fileStorageLocation;
-
+    
+    private static final Set<String> SUPPORTED_IMAGE_TYPES = Set.of(
+        "image/jpeg",
+        "image/jpg",
+        "image/png", 
+        "image/gif",
+        "image/bmp"
+    );
+    
+    @Override
+    public boolean supports(String contentType) {
+        return contentType != null
+                           && SUPPORTED_IMAGE_TYPES.contains(
+                            contentType.toLowerCase()
+                            );
+    }
+    
     public LocalFileStorageProvider(@Value("${file.upload-dir}") String uploadDir) {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
@@ -29,7 +46,17 @@ public class LocalFileStorageProvider implements FileStorageProvider {
 
     @Override
     public String store(MultipartFile file) {
-        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if (file == null) {
+            throw new FileStorageException("Cannot store null file");
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            originalFileName = "unknown_file";
+        } else {
+            originalFileName = StringUtils.cleanPath(originalFileName);
+        }
+        
         String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
 
         try {
@@ -64,11 +91,5 @@ public class LocalFileStorageProvider implements FileStorageProvider {
         } catch (IOException ex) {
             throw new FileStorageException("Could not delete file " + fileName, ex);
         }
-    }
-
-    @Override
-    public boolean supports(String fileType) {
-        // Local storage supports all file types
-        return true;
     }
 }

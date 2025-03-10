@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
+import java.lang.reflect.Method;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -28,16 +29,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAllExceptions(Exception ex, WebRequest request) {
+        // Use a safer approach by storing handlers with their explicit exception types
         for (ExceptionHandlerStrategy<? extends Exception> handler : exceptionHandlers) {
             if (handler.canHandle(ex)) {
-                // Safe to cast because canHandle() validates the exception type
-                @SuppressWarnings("unchecked")
-                ResponseEntity<?> response = ((ExceptionHandlerStrategy<Exception>) handler).handle(ex, request);
-                return response;
+                try {
+                    // Use reflection to invoke the handler with the right type
+                    Method handleMethod = handler.getClass().getMethod("handle", ex.getClass(), WebRequest.class);
+                    
+                    return (ResponseEntity<?>) handleMethod.invoke(handler, ex, request);
+                } catch (ReflectiveOperationException e) {
+                    // Fallback to default handling
+                }
             }
         }
         
-        // Default handling for unhandled exceptions
+        // Default handling
         logger.error("Unhandled exception", ex);
         return responseFactory.error(ex.getMessage());
     }

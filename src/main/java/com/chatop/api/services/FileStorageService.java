@@ -3,6 +3,9 @@ package com.chatop.api.services;
 import com.chatop.api.services.interfaces.IFileStorageService;
 import com.chatop.api.services.operations.file.LoadFileOperation;
 import com.chatop.api.services.operations.file.StoreFileOperation;
+
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +30,12 @@ public class FileStorageService implements IFileStorageService {
     }
 
     @Override
-    public byte[] loadFileAsBytes(String fileName) {
+    public byte[] retrieve(String fileName) {
         return loadFileOperation.execute(fileName);
+    }
+
+    @Override
+    public Set<String> getSupportedContentTypes() {
+        return storeFileOperation.getSupportedContentTypes();
     }
 }

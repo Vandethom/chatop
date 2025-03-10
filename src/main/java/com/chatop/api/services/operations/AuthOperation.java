@@ -1,5 +1,3 @@
 package com.chatop.api.services.operations;
 
-public interface AuthOperation<T, R> {
-    R execute(T input);
-}
+public interface AuthOperation<T, R> extends Operation<T, R> {}

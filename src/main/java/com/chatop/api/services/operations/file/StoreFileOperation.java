@@ -3,10 +3,13 @@ package com.chatop.api.services.operations.file;
 import com.chatop.api.exceptions.FileStorageException;
 import com.chatop.api.services.operations.FileOperation;
 import com.chatop.api.services.storage.FileStorageProvider;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class StoreFileOperation implements FileOperation<MultipartFile, String> {
@@ -28,5 +31,15 @@ public class StoreFileOperation implements FileOperation<MultipartFile, String> 
         }
         
         throw new FileStorageException("No storage provider found for file type: " + contentType);
+    }
+
+        public Set<String> getSupportedContentTypes() {
+        Set<String> allSupportedTypes = new HashSet<>();
+        
+        for (FileStorageProvider provider : storageProviders) {
+            allSupportedTypes.addAll(provider.getSupportedContentTypes());
+        }
+        
+        return allSupportedTypes;
     }
 }

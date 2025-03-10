@@ -38,10 +38,6 @@ public class UpdateRentalOperation implements RentalOperation<UpdateRentalInput,
         Rental rental    = rentalRepository.findById(input.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.RENTAL_NOT_FOUND + input.getId()));
 
-        if (currentUser == null) {
-            throw new UnauthorizedException(MessageConstants.AUTHENTICATION_REQUIRED);
-        }
-
         if (!rental.getOwner().getId().equals(currentUser.getId())) {
             throw new UnauthorizedException(MessageConstants.UNAUTHORIZED_RENTAL_UPDATE);
         }

@@ -26,6 +26,7 @@ public class GetRentalByIdOperation implements RentalOperation<Long, RentalRespo
     public RentalResponseDTO execute(Long id) {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Rental", "id", id));
+        
         return mapper.toResponseDTO(rental);
     }
 }

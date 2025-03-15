@@ -28,6 +28,11 @@ public class LocalFileStorageProvider implements FileStorageProvider {
     );
     
     @Override
+    public Set<String> getSupportedContentTypes() {
+        return SUPPORTED_IMAGE_TYPES;
+    }
+
+    @Override
     public boolean supports(String contentType) {
         return contentType != null
                            && SUPPORTED_IMAGE_TYPES.contains(

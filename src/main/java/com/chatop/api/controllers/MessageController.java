@@ -59,6 +59,7 @@ public class MessageController {
     })
     @PostMapping
     public ResponseEntity<MessageResponseDTO> createMessage(
+        //Todo : à mettre en DTO
         @Parameter(description = "Message details", required = true)
         @Valid @RequestBody MessageDTO messageDTO
     ) {

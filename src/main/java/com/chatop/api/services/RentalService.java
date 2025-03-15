@@ -37,8 +37,8 @@ public class RentalService implements IRentalService {
 
     @Autowired
     public RentalService(
-            RentalRepository      rentalRepository,
-            CreateRentalOperation createRentalOperation,
+            RentalRepository       rentalRepository,
+            CreateRentalOperation  createRentalOperation,
             GetAllRentalsOperation getAllRentalsOperation,
             GetRentalByIdOperation getRentalByIdOperation,
             UpdateRentalOperation  updateRentalOperation) {

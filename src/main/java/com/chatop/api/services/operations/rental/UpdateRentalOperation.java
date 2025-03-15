@@ -26,10 +26,10 @@ public class UpdateRentalOperation implements RentalOperation<UpdateRentalInput,
             AuthenticationService authService,
             TimeUtils             timeUtils
             ) {
-                this.rentalRepository = rentalRepository;
+                this.rentalRepository   = rentalRepository;
                 this.fileStorageService = fileStorageService;
-                this.authService = authService;
-                this.timeUtils = timeUtils;
+                this.authService        = authService;
+                this.timeUtils          = timeUtils;
             }
 
     @Override

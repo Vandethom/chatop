@@ -6,8 +6,6 @@ import com.chatop.api.dto.request.MessageDTO;
 import com.chatop.api.dto.response.MessageResponseDTO;
 
 import com.chatop.api.factories.ResponseFactory;
-import com.chatop.api.models.User;
-import com.chatop.api.services.AuthenticationService;
 import com.chatop.api.services.interfaces.IMessageService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,17 +31,14 @@ public class MessageController {
 
     private final IMessageService       messageService;
     private final ResponseFactory       responseFactory;
-    private final AuthenticationService authService;
 
     @Autowired
     public MessageController(
         IMessageService       messageService,
-        ResponseFactory       responseFactory,
-        AuthenticationService authService
+        ResponseFactory       responseFactory
         ) {
             this.messageService  = messageService;
             this.responseFactory = responseFactory;
-            this.authService     = authService;
     }
 
     @Operation(
@@ -59,13 +54,9 @@ public class MessageController {
     })
     @PostMapping
     public ResponseEntity<MessageResponseDTO> createMessage(
-        //Todo : à mettre en DTO
-        @Parameter(description = "Message details", required = true)
         @Valid @RequestBody MessageDTO messageDTO
-    ) {
-        User currentUser = authService.getCurrentUser();
-        
-        messageService.createMessage(messageDTO, currentUser);
+    ) {        
+        messageService.createMessage(messageDTO);
         
         return responseFactory.created(MessageConstants.MESSAGE_CREATED);
     }

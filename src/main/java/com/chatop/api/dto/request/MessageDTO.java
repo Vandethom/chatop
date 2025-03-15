@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-@Schema(description = "Message creation request")
+@Schema(description = "Data transfer object for creating a new message")
 public class MessageDTO {
     
     @Schema(description = "ID of the rental this message is about", example = "42")

@@ -6,9 +6,9 @@ import com.chatop.api.models.User;
 import com.chatop.api.services.interfaces.IMessageService;
 import com.chatop.api.services.operations.message.CreateMessageInput;
 import com.chatop.api.services.operations.message.CreateMessageOperation;
+import com.chatop.api.services.operations.message.GetAllMessagesOperation;
 import com.chatop.api.services.operations.message.GetMessageByIdOperation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +17,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageService implements IMessageService {
 
-    private final CreateMessageOperation createMessageOperation;
+    private final CreateMessageOperation  createMessageOperation;
     private final GetMessageByIdOperation getMessageByIdOperation;
+    private final GetAllMessagesOperation getAllMessagesOperation;
+    private final AuthenticationService   authService;
     
     @Autowired
     public MessageService(
             CreateMessageOperation  createMessageOperation,
-            GetMessageByIdOperation getMessageByIdOperation) {
+            GetMessageByIdOperation getMessageByIdOperation,
+            GetAllMessagesOperation getAllMessagesOperation,
+            AuthenticationService   authService
+            ) {
                 this.createMessageOperation  = createMessageOperation;
                 this.getMessageByIdOperation = getMessageByIdOperation;
+                this.getAllMessagesOperation = getAllMessagesOperation;
+                this.authService             = authService;
             }
 
     @Override
     public void createMessage(
-        MessageDTO messageDTO, 
-        User       sender
+        MessageDTO messageDTO
         ) {
-            CreateMessageInput input = new CreateMessageInput(messageDTO, sender);
+            User               currentUser = authService.getCurrentUser();
+            CreateMessageInput input       = new CreateMessageInput(messageDTO, currentUser);
+            
             createMessageOperation.execute(input);
         }
 
@@ -44,8 +52,6 @@ public class MessageService implements IMessageService {
 
     @Override
     public List<MessageResponseDTO> getAllMessages() {
-        // You'll need to implement this method
-        // For now, let's return an empty list
-        return new ArrayList<>();
+        return getAllMessagesOperation.execute(null);
     }
 }

@@ -2,7 +2,7 @@ package com.chatop.api.services.operations.user;
 
 import com.chatop.api.dto.response.UserResponseDTO;
 import com.chatop.api.exceptions.ResourceNotFoundException;
-import com.chatop.api.mappers.interfaces.IUserMapper;
+import com.chatop.api.interfaces.IUserMapper;
 import com.chatop.api.models.User;
 import com.chatop.api.repositories.UserRepository;
 import com.chatop.api.services.operations.UserOperation;

@@ -2,7 +2,7 @@ package com.chatop.api.services.operations.rental;
 
 import com.chatop.api.dto.response.RentalResponseDTO;
 import com.chatop.api.exceptions.ResourceNotFoundException;
-import com.chatop.api.mappers.interfaces.IRentalMapper;
+import com.chatop.api.interfaces.IRentalMapper;
 import com.chatop.api.models.Rental;
 import com.chatop.api.repositories.RentalRepository;
 import com.chatop.api.services.operations.RentalOperation;

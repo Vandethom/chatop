@@ -2,8 +2,8 @@ package com.chatop.api.config;
 
 import com.chatop.api.dto.request.RentalDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
+import com.chatop.api.interfaces.IRentalMapper;
 import com.chatop.api.mappers.RentalMapperStruct;
-import com.chatop.api.mappers.interfaces.IRentalMapper;
 import com.chatop.api.models.Rental;
 
 import java.util.List;

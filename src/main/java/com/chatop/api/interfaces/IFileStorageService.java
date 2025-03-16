@@ -1,4 +1,4 @@
-package com.chatop.api.services.interfaces;
+package com.chatop.api.interfaces;
 
 import java.util.Set;
 

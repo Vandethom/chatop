@@ -2,8 +2,8 @@ package com.chatop.api.config;
 
 import com.chatop.api.dto.request.MessageDTO;
 import com.chatop.api.dto.response.MessageResponseDTO;
+import com.chatop.api.interfaces.IMessageMapper;
 import com.chatop.api.mappers.MessageMapperStruct;
-import com.chatop.api.mappers.interfaces.IMessageMapper;
 import com.chatop.api.models.Message;
 import com.chatop.api.models.Rental;
 import com.chatop.api.models.User;

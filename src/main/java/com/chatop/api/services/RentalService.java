@@ -5,14 +5,11 @@ import com.chatop.api.dto.request.RentalUpdateDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;
 
 import com.chatop.api.exceptions.ResourceNotFoundException;
-
+import com.chatop.api.interfaces.IRentalService;
 import com.chatop.api.models.Rental;
 import com.chatop.api.models.User;
 
 import com.chatop.api.repositories.RentalRepository;
-
-import com.chatop.api.services.interfaces.IRentalService;
-
 import com.chatop.api.services.operations.rental.CreateRentalInput;
 import com.chatop.api.services.operations.rental.CreateRentalOperation;
 import com.chatop.api.services.operations.rental.GetAllRentalsOperation;

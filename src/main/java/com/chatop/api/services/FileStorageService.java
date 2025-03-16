@@ -1,6 +1,6 @@
 package com.chatop.api.services;
 
-import com.chatop.api.services.interfaces.IFileStorageService;
+import com.chatop.api.interfaces.IFileStorageService;
 import com.chatop.api.services.operations.file.LoadFileOperation;
 import com.chatop.api.services.operations.file.StoreFileOperation;
 

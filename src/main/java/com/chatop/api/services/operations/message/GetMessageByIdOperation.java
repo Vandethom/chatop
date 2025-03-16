@@ -2,7 +2,7 @@ package com.chatop.api.services.operations.message;
 
 import com.chatop.api.dto.response.MessageResponseDTO;
 import com.chatop.api.exceptions.ResourceNotFoundException;
-import com.chatop.api.mappers.interfaces.IMessageMapper;
+import com.chatop.api.interfaces.IMessageMapper;
 import com.chatop.api.models.Message;
 import com.chatop.api.repositories.MessageRepository;
 import com.chatop.api.services.operations.MessageOperation;

@@ -1,4 +1,4 @@
-package com.chatop.api.mappers.interfaces;
+package com.chatop.api.interfaces;
 
 import java.util.List;
 

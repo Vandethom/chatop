@@ -3,9 +3,10 @@ package com.chatop.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import com.chatop.api.mappers.interfaces.IMessageMapper;
-import com.chatop.api.mappers.interfaces.IRentalMapper;
-import com.chatop.api.mappers.interfaces.IUserMapper;
+
+import com.chatop.api.interfaces.IMessageMapper;
+import com.chatop.api.interfaces.IRentalMapper;
+import com.chatop.api.interfaces.IUserMapper;
 import com.chatop.api.mappers.MessageMapperStruct;
 import com.chatop.api.mappers.RentalMapperStruct;
 import com.chatop.api.mappers.UserMapperStruct;

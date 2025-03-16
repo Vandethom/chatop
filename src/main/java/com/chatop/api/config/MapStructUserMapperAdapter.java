@@ -2,8 +2,8 @@ package com.chatop.api.config;
 
 import com.chatop.api.dto.request.UserDTO;
 import com.chatop.api.dto.response.UserResponseDTO;
+import com.chatop.api.interfaces.IUserMapper;
 import com.chatop.api.mappers.UserMapperStruct;
-import com.chatop.api.mappers.interfaces.IUserMapper;
 import com.chatop.api.models.User;
 
 import java.util.List;

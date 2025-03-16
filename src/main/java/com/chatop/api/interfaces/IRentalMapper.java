@@ -1,4 +1,4 @@
-package com.chatop.api.mappers.interfaces;
+package com.chatop.api.interfaces;
 
 import com.chatop.api.dto.request.RentalDTO;
 import com.chatop.api.dto.response.RentalResponseDTO;

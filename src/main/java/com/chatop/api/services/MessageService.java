@@ -2,8 +2,8 @@ package com.chatop.api.services;
 
 import com.chatop.api.dto.request.MessageDTO;
 import com.chatop.api.dto.response.MessageResponseDTO;
+import com.chatop.api.interfaces.IMessageService;
 import com.chatop.api.models.User;
-import com.chatop.api.services.interfaces.IMessageService;
 import com.chatop.api.services.operations.message.CreateMessageInput;
 import com.chatop.api.services.operations.message.CreateMessageOperation;
 import com.chatop.api.services.operations.message.GetAllMessagesOperation;
@@ -37,7 +37,8 @@ public class MessageService implements IMessageService {
 
     @Override
     public void createMessage(
-        MessageDTO messageDTO
+        MessageDTO messageDTO,
+        User       user
         ) {
             User               currentUser = authService.getCurrentUser();
             CreateMessageInput input       = new CreateMessageInput(messageDTO, currentUser);

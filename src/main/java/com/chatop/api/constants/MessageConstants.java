@@ -6,7 +6,8 @@ public class MessageConstants {
     public static final String RENTAL_UPDATED  = "Rental updated successfully";
     public static final String MESSAGE_CREATED = "Message sent successfully";
     public static final String USER_REGISTERED = "User registered successfully";
-    
+    public static final String USER_CREATED    = "User created successfully";
+
     // Error messages
     public static final String RENTAL_NOT_FOUND           = "Rental not found with id: ";
     public static final String USER_NOT_FOUND             = "User not found with id: ";

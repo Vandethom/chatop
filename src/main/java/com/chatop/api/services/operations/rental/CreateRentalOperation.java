@@ -1,9 +1,9 @@
 package com.chatop.api.services.operations.rental;
 
-import com.chatop.api.mappers.interfaces.IRentalMapper;
+import com.chatop.api.interfaces.IFileStorageService;
+import com.chatop.api.interfaces.IRentalMapper;
 import com.chatop.api.models.Rental;
 import com.chatop.api.repositories.RentalRepository;
-import com.chatop.api.services.interfaces.IFileStorageService;
 import com.chatop.api.services.operations.RentalOperation;
 import com.chatop.api.utils.TimeUtils;
 import org.springframework.stereotype.Component;

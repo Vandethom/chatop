@@ -1,12 +1,45 @@
-1. Clone the repository
+# ChatOp API 🏠
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
+
+A rental property API with user authentication, property management, and messaging capabilities.
+
+## 📋 Table of Contents
+
+- [Installation](#installation)
+- [Database Setup](#database-setup)
+- [Configuration](#configuration)
+- [Running the API](#running-the-api)
+- [API Access](#api-access)
+- [Endpoints](#endpoints)
+- [Features](#features)
+- [Project Structure](#project-structure)
+
+## 🚀 Installation
+
+```bash
+# Clone the repository
 git clone https://github.com/Vandethom/chatop.git
 cd chatop-api
 
-2. Database setup
-CREATE DATABASE chatop;
+# Install dependencies
+mvn clean install
+```
 
-3. Configuration
-Update application.properties with your credentials and settings:
+## 💾 Database Setup
+
+```sql
+CREATE DATABASE chatop;
+```
+
+## ⚙️ Configuration
+
+Update `application.properties` with your credentials and settings:
+
+```properties
 # Database Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/chatop
 spring.datasource.username=root
@@ -17,53 +50,81 @@ spring.jpa.hibernate.ddl-auto=update
 spring.servlet.multipart.enabled=true
 spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
-file.upload-dir=/path/to/upload/directory (best to have it below the /src folder)
+file.upload-dir=/path/to/upload/directory
 
 # JWT Configuration
 jwt.secret=your_jwt_secret_key
 jwt.expiration=86400000
+```
 
-4. Install dependencies using Maven
-mvn clean install
+> **Note:** It's recommended to place the upload directory below the `/src` folder.
 
-5. Run the api using SpringBoot
+## 🏃‍♂️ Running the API
+
+```bash
 mvn spring-boot:run
+```
 
-6. URLs
-To access the API     : http://localhost:3002
-To access the swagger : http://localhost:3002/swagger-ui.html
+## 🌐 API Access
 
-7. Endpoints
-Authentication
-POST /api/auth/register - Register a new user
-POST /api/auth/login    - Login and get JWT token
-GET  /api/auth/me       - Get current user profile
+| Resource | URL |
+|----------|-----|
+| API Base URL | http://localhost:3002 |
+| Swagger Documentation | http://localhost:3002/swagger-ui.html |
 
-Rentals
-GET  /api/rentals      - Get all rentals
-GET  /api/rentals/{id} - Get a specific rental
-POST /api/rentals      - Create a new rental (multipart/form-data)
-PUT  /api/rentals/{id} - Update a rental
+## 🔌 Endpoints
 
-Messages
-POST /api/messages - Send a message about a rental
+<details>
+<summary><b>Authentication</b></summary>
 
-8. Features
-User Authentication: Secure JWT-based authentication
-Rental Management  : Create, read, update rental properties
-File Storage       : Upload and serve property images
-Messaging System   : Communication between users about properties
-Input Validation   : Request validation with detailed error messages
-API Documentation  : Comprehensive Swagger documentation
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login and get JWT token |
+| GET | `/api/auth/me` | Get current user profile |
+</details>
 
-9. Project structure
-controllers : REST API endpoints
-services    : Business logic implementation
-repositories: Data access layer
-models      : Entity classes mapped to database tables
-dto         : Data Transfer Objects for request/response
-mappers     : Conversion between DTOs and entities
-exceptions  : Custom exception classes
-config      : Application configuration
-utils       : Utility classes
-constants   : Application constants and messages
+<details>
+<summary><b>Rentals</b></summary>
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/rentals` | Get all rentals |
+| GET | `/api/rentals/{id}` | Get a specific rental |
+| POST | `/api/rentals` | Create a new rental (multipart/form-data) |
+| PUT | `/api/rentals/{id}` | Update a rental |
+</details>
+
+<details>
+<summary><b>Messages</b></summary>
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/messages` | Send a message about a rental |
+</details>
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔐 **User Authentication** | Secure JWT-based authentication |
+| 🏠 **Rental Management** | Create, read, update rental properties |
+| 📁 **File Storage** | Upload and serve property images |
+| 💬 **Messaging System** | Communication between users about properties |
+| ✅ **Input Validation** | Request validation with detailed error messages |
+| 📚 **API Documentation** | Comprehensive Swagger documentation |
+
+## 🏗️ Project Structure
+
+| Directory | Purpose |
+|-----------|---------|
+| `controllers` | REST API endpoints |
+| `services` | Business logic implementation |
+| `repositories` | Data access layer |
+| `models` | Entity classes mapped to database tables |
+| `dto` | Data Transfer Objects for request/response |
+| `mappers` | Conversion between DTOs and entities |
+| `exceptions` | Custom exception classes |
+| `config` | Application configuration |
+| `utils` | Utility classes |
+| `constants` | Application constants and messages |

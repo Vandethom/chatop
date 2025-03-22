@@ -34,6 +34,34 @@ mvn clean install
 ```sql
 CREATE DATABASE chatop;
 ```
+## Environment Variables Configuration
+
+This application uses environment variables to manage sensitive configuration and deployment-specific settings. This approach keeps credentials secure and allows for environment-specific configurations.
+
+### Option 1: Using a `.env` File (Recommended for Development)
+
+1. Create a `.env` file in the project root directory:
+Database Configuration
+```
+MYSQL_URL=jdbc:mysql://localhost:3306/chatop MYSQL_USERNAME=your_mysql_username MYSQL_PASSWORD=your_mysql_password
+
+JWT Configuration
+JWT_SECRET=your_jwt_secret_key JWT_EXPIRATION=86400000
+
+File Upload Configuration
+FILE_UPLOAD_DIR=/path/to/your/upload/directory
+
+Server Configuration
+PORT=3002
+```
+
+2. Install the `spring-dotenv` dependency in your `pom.xml`:
+```xml
+<dependency>
+    <groupId>me.paulschwarz</groupId>
+    <artifactId>spring-dotenv</artifactId>
+    <version>3.0.0</version>
+</dependency>
 
 ## ⚙️ Configuration
 

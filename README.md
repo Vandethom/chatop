@@ -43,7 +43,9 @@ This application uses environment variables to manage sensitive configuration an
 1. Create a `.env` file in the project root directory:
 Database Configuration
 ```
-MYSQL_URL=jdbc:mysql://localhost:3306/chatop MYSQL_USERNAME=your_mysql_username MYSQL_PASSWORD=your_mysql_password
+MYSQL_URL=jdbc:mysql://localhost:3306/chatop 
+MYSQL_USERNAME=your_mysql_username 
+MYSQL_PASSWORD=your_mysql_password
 
 JWT Configuration
 JWT_SECRET=your_jwt_secret_key JWT_EXPIRATION=86400000

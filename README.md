@@ -72,20 +72,23 @@ Update `application.properties` with your credentials and settings:
 
 ```properties
 # Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/chatop
-spring.datasource.username=root
-spring.datasource.password=your_password
+spring.datasource.url=${MYSQL_URL}
+spring.datasource.username=${MYSQL_USERNAME}
+spring.datasource.password=${MYSQL_PASSWORD}
 spring.jpa.hibernate.ddl-auto=update
 
 # File Upload Configuration
 spring.servlet.multipart.enabled=true
 spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
-file.upload-dir=/path/to/upload/directory
+file.upload-dir=${FILE_UPLOAD_DIR}
 
 # JWT Configuration
-jwt.secret=your_jwt_secret_key
-jwt.expiration=86400000
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION}
+
+# Server Configuration
+server.port=${PORT:3002}
 ```
 
 > **Note:** It's recommended to place the upload directory below the `/src` folder.

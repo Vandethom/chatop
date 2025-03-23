@@ -9,22 +9,22 @@ import jakarta.validation.constraints.Positive;
 public class RentalDTO {
     
     @Schema(description = "Name of the rental property", example = "Cozy Studio in Paris")
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "{NotBlank.rentalDTO.name}")
     private String name;
     
     @Schema(description = "Surface area in square meters", example = "45.5")
-    @NotNull(message = "Surface is required")
-    @Positive(message = "Surface must be positive")
+    @NotNull(message = "{NotNull.rentalDTO.surface}")
+    @Positive(message = "{Positive.rentalDTO.surface}")
     private Double surface;
     
     @Schema(description = "Monthly rental price", example = "1200.0")
-    @NotNull(message = "Price is required")
-    @Positive(message = "Price must be positive")
+    @NotNull(message = "{NotNull.rentalDTO.price}")
+    @Positive(message = "{Positive.rentalDTO.price}")
     private Double price;
     
     @Schema(description = "Detailed description of the property", 
             example = "Beautiful studio apartment with a view of the Eiffel Tower")
-    @NotBlank(message = "Description is required")
+    @NotBlank(message = "{NotBlank.rentalDTO.description}")
     private String description;
 
     // Getters and Setters

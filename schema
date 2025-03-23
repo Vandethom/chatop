@@ -1,0 +1,59 @@
+Client (Angular) ──────┐
+                       ▼
+┌───────────────────────────────┐
+│ Controller (RentalController) │ ──> Validation des données
+└───────────────────────────────┘     & Récupération de l'utilisateur
+                       │
+                       ▼
+┌──────────────────────────────┐
+│ DTO (CreateRentalDTO)        │ ──> Transport des données
+└──────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────┐
+│ Service (RentalService)      │ ──> Orchestration des opérations
+└──────────────────────────────┘
+           │           │
+           ▼           ▼
+┌────────────────┐ ┌────────────────┐
+│ Mapper         │ │ FileStorage    │
+└────────────────┘ └────────────────┘
+           │                │
+           ▼                │
+┌──────────────────────────────┐
+│ Entity (Rental)              │
+└──────────────────────────────┘
+                       │
+                       ▼
+┌───────────────────────────────┐
+│ Repository (RentalRepository) │ ──> Persistance
+└───────────────────────────────┘
+                       │
+                       ▼
+                 Base de données
+
+
+
+
+
+Client ─── Token JWT ───┐
+                        ▼
+┌──────────────────────────────┐
+│ JwtRequestFilter             │ ──> Interception et validation du token
+└──────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│ SecurityContextService       │ ──> Gestion du contexte de sécurité
+└──────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│ CustomUserDetailsService     │ ──> Chargement des détails utilisateur
+└──────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────┐
+│ SecurityConfig               │ ──> Configuration des règles de sécurité
+└──────────────────────────────┘
+

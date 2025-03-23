@@ -42,15 +42,15 @@ public class Message implements TimestampAware {
     public Message() {}
 
     public Message(
-        Rental rental, 
-        User user, 
-        String message, 
+        Rental    rental, 
+        User      user, 
+        String    message, 
         Timestamp createdAt, 
         Timestamp updatedAt
         ) {
-            this.rental = rental;
-            this.user = user;
-            this.message = message;
+            this.rental    = rental;
+            this.user      = user;
+            this.message   = message;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
         }

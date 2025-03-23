@@ -8,12 +8,12 @@ import jakarta.validation.constraints.NotBlank;
 public class LoginDTO {
     
     @Schema(description = "User's email address", example = "john.doe@example.com")
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @NotBlank(message = "{NotBlank.loginDTO.email}")
+    @Email(message = "{Email.loginDTO.email}")
     private String email;
     
     @Schema(description = "User's password", example = "SecureP@ssw0rd")
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "{NotBlank.loginDTO.password}")
     private String password;
 
     // Getters and Setters

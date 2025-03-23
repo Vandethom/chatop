@@ -8,15 +8,15 @@ import jakarta.validation.constraints.NotNull;
 public class MessageDTO {
     
     @Schema(description = "ID of the rental this message is about", example = "42")
-    @NotNull(message = "Rental ID is required")
+    @NotNull(message = "{NotNull.messageDTO.rental_id}")
     private Long rental_id;
     
     @Schema(description = "ID of the user sending the message", example = "15")
-    @NotNull(message = "User ID is required")
+    @NotNull(message = "{NotNull.messageDTO.user_id}")
     private Long user_id;
     
     @Schema(description = "Message content", example = "I'm interested in renting this property. Is it still available?")
-    @NotBlank(message = "Message content is required")
+    @NotBlank(message = "{NotBlank.messageDTO.message}")
     private String message;
 
     // Getters and Setters

@@ -40,6 +40,7 @@ public class CreateRentalOperation implements RentalOperation<CreateRentalInput,
         
         timeUtils.initializeTimestamps(rental);
         rentalRepository.save(rental);
+        
         return null;
     }
 }

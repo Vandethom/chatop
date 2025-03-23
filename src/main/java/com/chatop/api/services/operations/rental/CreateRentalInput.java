@@ -11,8 +11,8 @@ public class CreateRentalInput {
     
     public CreateRentalInput(RentalDTO rentalDTO, MultipartFile picture, User owner) {
         this.rentalDTO = rentalDTO;
-        this.picture = picture;
-        this.owner = owner;
+        this.picture   = picture;
+        this.owner     = owner;
     }
     
     public RentalDTO getRentalDTO() {

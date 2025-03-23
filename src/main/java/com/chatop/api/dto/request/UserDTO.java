@@ -10,17 +10,17 @@ import jakarta.validation.constraints.Size;
 public class UserDTO {
     
     @Schema(description = "User's full name", example = "John Doe")
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "{NotBlank.userDTO.name}")
     private String name;
     
     @Schema(description = "User's email address", example = "john.doe@example.com")
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @NotBlank(message = "{NotBlank.userDTO.email}")
+    @Email(message = "{Email.userDTO.email}")
     private String email;
     
     @Schema(description = "User's password", example = "SecureP@ssw0rd")
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @NotBlank(message = "{NotBlank.userDTO.password}")
+    @Size(min = 8, message = "{Size.userDTO.password}")
     @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter")
     @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lowercase letter")
     @Pattern(regexp = ".*\\d.*", message = "Password must contain at least one digit")
